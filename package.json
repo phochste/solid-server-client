@@ -1,0 +1,31 @@
+{
+  "name": "solid-server-client",
+  "version": "0.0.1",
+  "description": "Solid client for server applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "keys": "openssl genrsa -out etc/private.key 2048 && openssl rsa -in etc/private.key -pubout > etc/public.key",
+    "cert": "openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout etc/key.pem -out etc/cert.pem",
+    "web": "node index.js jwks --public etc/public.key > web/jwks && node index.js openid-configuration --jwks https://localhost:8081/jwks > web/.well-known/openid-configuration && node index.js webid --issuer https://localhost:8081 --name demo > web/card.ttl",
+    "session": "node index.js session --private etc/private.key --public etc/public.key --webid https://localhost:8081/card.ttl#me --issuer https://localhosts:8081 --expire 14 > etc/session.json",
+    "serve": "npx http-server -S -C etc/cert.pem -K etc/key.pem web",
+    "headers": "node index.js headers --private etc/private.key --public etc/public.key --session etc/session.json"
+  },
+  "keywords": [
+    "solid",
+    "authentication",
+    "client"
+  ],
+  "author": "Patrick Hochstenbach",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^9.0.0",
+    "jose": "^4.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.0"
+  }
+}
